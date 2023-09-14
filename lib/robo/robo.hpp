@@ -23,12 +23,6 @@ public:
     // 毎ループ呼ぶ関数
     void execute();
 
-    /**
-     * @brief 速度を設定
-     * @param _velocity ロボットからみた速度
-    */
-    void set_velocity(velocity_t _velocity);
-
     // コマンド入力に対応して呼ぶ
     void go_up();
     void go_down();
