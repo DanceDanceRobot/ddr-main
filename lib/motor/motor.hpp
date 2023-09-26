@@ -31,7 +31,7 @@ private:
     const motor_pin_t &pin;
 public:
     MOTOR(const motor_pin_t &_pin,float _motor_k)
-        :pin(_pin),motor_k(_motor_k/2){
+        :pin(_pin),motor_k(_motor_k){
     }
 
     void init(void);
