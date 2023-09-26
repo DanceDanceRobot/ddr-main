@@ -41,7 +41,7 @@ void MOTOR::out(float duty){
     assert(duty<1.0f || duty>-1.0f);
 
     digitalWrite((int)pin.en,HIGH);
-    ledcWrite(pin.pwm.ch,(duty*motor_k+1)*PWM_RESOL);
+    ledcWrite(pin.pwm.ch,(duty*motor_k+1)*PWM_RESOL/2);
 }
 
 void MOTOR::free(void){
