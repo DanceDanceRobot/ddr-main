@@ -25,8 +25,11 @@ ROBO::ROBO() :
     target_dir(0),
 
     state(states::STATE_STANDBY)
+{}
+
+void ROBO::init()
 {
-      Serial.begin(115200);
+    Serial.begin(115200);
     Serial.printf("comp setup");
     // // ジャイロ
     // Wire.begin();

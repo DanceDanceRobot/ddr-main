@@ -20,6 +20,9 @@ public:
     // コンストラクタ
     ROBO();
 
+    // init関数
+    void init();
+
     // 毎ループ呼ぶ関数
     void execute();
 

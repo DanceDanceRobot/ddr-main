@@ -22,7 +22,7 @@
 ROBO robo;
 
 void setup() {
-
+  robo.init();
 }
 
 void loop() {
