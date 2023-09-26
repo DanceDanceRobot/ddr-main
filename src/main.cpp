@@ -23,9 +23,10 @@ ROBO robo;
 
 void setup() {
   robo.init();
+  robo.go_left();
 }
 
 void loop() {
-  void execute();
+  robo.execute();
   ets_delay_us(1000);
 }

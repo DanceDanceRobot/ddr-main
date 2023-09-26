@@ -3,7 +3,7 @@
 #include <math.h>
 
 ROBO::ROBO() :
-    // gyro_sens(Wire),
+    gyro_sens(Wire),
     md1(DRIVER1_pin),
     md2(DRIVER2_pin),
     /**
@@ -32,8 +32,8 @@ void ROBO::init()
     Serial.begin(115200);
     Serial.printf("comp setup");
     // // ジャイロ
-    // Wire.begin();
-    // gyro_sens.init();
+    Wire.begin();
+    gyro_sens.init();
 
     // ドライバ
     md1.init();
@@ -70,15 +70,15 @@ void ROBO::execute()
 
     // モータを回す
     // こんな計算で…いいのか？ #debug
-    motorLF.out(1.0f);
-    motorRF.out(1.0f);
-    motorLB.out(1.0f);
-    motorRB.out(1.0f);
+    // motorLF.out(1.0f);
+    // motorRF.out(1.0f);
+    // motorLB.out(1.0f);
+    // motorRB.out(1.0f);
     
-    // motorLF.out((vel.x - vel.y + vel.angular) / 3.0);
-    // motorRF.out((vel.x + vel.y + vel.angular) / 3.0);
-    // motorLB.out((vel.x + vel.y - vel.angular) / 3.0);
-    // motorRB.out((vel.x - vel.y + vel.angular) / 3.0);
+    motorLF.out(-(vel.x - vel.y + vel.angular) / 1.0f);
+    motorRF.out((vel.x + vel.y + vel.angular) / 1.0f);
+    motorLB.out(-(vel.x + vel.y - vel.angular) / 1.0f);
+    motorRB.out((vel.x - vel.y + vel.angular) / 1.0f);
 }
 
 void ROBO::go_up() {
@@ -131,7 +131,7 @@ void ROBO::stop() {
 }
 
 float ROBO::get_angle() {
-    // // ジャイロのついてる向きが分からんので確認して #debug
-    // xyz_t data = gyro_sens.read_mag();
-    // return std::atan2(data.y, data.x);
+    // ジャイロのついてる向きが分からんので確認して #debug
+    xyz_t data = gyro_sens.read_mag();
+    return std::atan2(data.y, data.x);
 }
