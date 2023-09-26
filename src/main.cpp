@@ -1,18 +1,31 @@
-#include <Arduino.h>
+// #include <Arduino.h>
+// #include "motor.hpp"
+// DRIVER md1(DRIVER1_pin);
+// DRIVER md2(DRIVER2_pin);
+// MOTOR motor1(MOTOR1_pin,1.0f);
+// MOTOR motor2(MOTOR2_pin,1.0f);
+// MOTOR motor3(MOTOR3_pin,1.0f);
+// MOTOR motor4(MOTOR4_pin,1.0f);
+// void setup() {
+//   // put your setup code here, to run once:
+//   md1.init();
+//   md2.init();
+//   motor1.init();
+//   motor2.init();
+//   motor3.init();
+//   motor4.init();
+// }
 
-// put function declarations here:
-int myFunction(int, int);
+#include <Arduino.h>
+#include "robo.hpp"
+
+ROBO robo;
 
 void setup() {
-  // put your setup code here, to run once:
-  int result = myFunction(2, 3);
+
 }
 
 void loop() {
-  // put your main code here, to run repeatedly:
-}
-
-// put function definitions here:
-int myFunction(int x, int y) {
-  return x + y;
+  void execute();
+  ets_delay_us(1000);
 }

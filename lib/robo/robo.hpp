@@ -48,7 +48,7 @@ private:
     velocity_t vel; // 目標速度
     float target_dir; // 目標角度
 
-    BMX055 gyro_sens; // ジャイロ
+    //BMX055 gyro_sens; // ジャイロ
 
     // ドライバ
     DRIVER md1;
