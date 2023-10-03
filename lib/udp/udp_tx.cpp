@@ -17,7 +17,4 @@ void UdpTx::write(const ConnectionData& data){
     udp.beginPacket(MDNS.queryHost("UDP_Client00"), Remote_Port);
     udp.write(send_data);
     udp.endPacket();
-    Serial.print("send : ");
-    Serial.print(send_data);
-    Serial.println();
 }

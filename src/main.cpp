@@ -18,15 +18,54 @@
 
 #include <Arduino.h>
 #include "robo.hpp"
+#include "standalone_udp_rx.hpp"
 
 ROBO robo;
+StdAlnUdpRx udp_rx;
 
 void setup() {
+  udp_rx.init();
   robo.init();
-  robo.go_left();
 }
 
 void loop() {
+  static int cnt = 0;
+  udp_rx.update();
+  if(udp_rx.is_updated()){
+    cnt = 0;
+    ConnectionData data = udp_rx.read();
+    if(data.data.up) robo.go_up();
+    if(data.data.down) robo.go_down();
+    if(data.data.left) robo.go_left();
+    if(data.data.right) robo.go_right();
+    if(data.data.l_turn) robo.turn_left();
+    if(data.data.r_turn) robo.turn_right();
+  }
+  else {
+    Serial.println(cnt);
+    cnt++;
+  }
+  if(cnt>=1000) {
+    robo.stop(); 
+  }
   robo.execute();
   ets_delay_us(1000);
 }
+
+// #include <Arduino.h>
+// #include "standalone_udp_tx.hpp"
+
+// StdAlnUdpTx udp_tx;
+
+// void setup() {
+//   Serial.begin(115200);
+//   udp_tx.init();
+// }
+
+// void loop() {
+//   ConnectionData data;
+//   data.down();
+//   udp_tx.write(data);
+//   if(!udp_tx.get_wifi_flg()) udp_tx.init();
+//   ets_delay_us(1000);
+// }

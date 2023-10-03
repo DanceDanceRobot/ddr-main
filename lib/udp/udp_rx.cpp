@@ -4,10 +4,8 @@ void UdpRx::init(void){
     WiFi.mode(WIFI_STA);
     WiFi.begin(ssid, password);
     while (WiFi.status() != WL_CONNECTED) {
-        Serial.println("waiting...");
         delay(1000);
     }
-    Serial.println("wifi_connect!");
     MDNS.begin("UDP_Client00");
     udp.begin(Org_Port);
 }

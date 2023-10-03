@@ -30,7 +30,6 @@ ROBO::ROBO() :
 void ROBO::init()
 {
     Serial.begin(115200);
-    Serial.printf("comp setup");
     // // ジャイロ
     Wire.begin();
     gyro_sens.init();
@@ -47,7 +46,7 @@ void ROBO::init()
 
 void ROBO::execute()
 {
-    // 回転をとめる判定のマージン
+    // // 回転をとめる判定のマージン
     // constexpr float margin = 0.1;
     // float direction = get_angle();
 
@@ -70,15 +69,14 @@ void ROBO::execute()
 
     // モータを回す
     // こんな計算で…いいのか？ #debug
-    // motorLF.out(1.0f);
-    // motorRF.out(1.0f);
-    // motorLB.out(1.0f);
-    // motorRB.out(1.0f);
-    
+    Serial.print(vel.x);
+    Serial.print(", ");
+    Serial.print(vel.y);
+    Serial.println(" ");
     motorLF.out(-(vel.x - vel.y + vel.angular) / 1.0f);
     motorRF.out((vel.x + vel.y + vel.angular) / 1.0f);
     motorLB.out(-(vel.x + vel.y - vel.angular) / 1.0f);
-    motorRB.out((vel.x - vel.y + vel.angular) / 1.0f);
+    motorRB.out(-(vel.x - vel.y + vel.angular) / 1.0f);
 }
 
 void ROBO::go_up() {
