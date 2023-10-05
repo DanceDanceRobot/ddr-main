@@ -72,55 +72,34 @@ void ROBO::execute()
     Serial.print(vel.x);
     Serial.print(", ");
     Serial.print(vel.y);
+    Serial.print(", ");
+    Serial.print(vel.angular);
     Serial.println(" ");
-    motorLF.out(-(vel.x - vel.y + vel.angular) / 1.0f);
-    motorRF.out((vel.x + vel.y + vel.angular) / 1.0f);
-    motorLB.out(-(vel.x + vel.y - vel.angular) / 1.0f);
-    motorRB.out(-(vel.x - vel.y + vel.angular) / 1.0f);
+    motorLF.out((vel.x - vel.y + vel.angular) / 2.0f);
+    motorRF.out((vel.x + vel.y + vel.angular) / 2.0f);
+    motorLB.out(-(vel.x + vel.y - vel.angular) / 2.0f);
+    motorRB.out((vel.x - vel.y + vel.angular) / 2.0f);
 }
 
-void ROBO::go_up() {
-    vel.x = 1.0;
-    vel.y = 0.0;
+void ROBO::set_velocity(float vx, float vy) {
+    vel.x = vx;
+    vel.y = vy;
 }
 
-void ROBO::go_down() {
-    vel.x = -1.0;
-    vel.y = 0.0;
+void ROBO::set_vel_x(float vx) {
+    vel.x = vx;
 }
 
-void ROBO::go_left() {
-    vel.x = 0.0;
-    vel.y = 1.0;
-}
-
-void ROBO::go_right() {
-    vel.x = 0.0;
-    vel.y = -1.0;
+void ROBO::set_vel_y(float vy) {
+    vel.y = vy;
 }
 
 void ROBO::turn_right() {
-    // 回転途中だったら抜ける
-    if (state == states::STATE_TURN) return;
-
-    target_dir -= 3.14 / 2;
-    if (target_dir < -3.14) {
-        target_dir = 3.14 / 2;
-    }
-    vel.angular = -1.0;
-    state = states::STATE_TURN;
+    
 }
 
 void ROBO::turn_left() {
-    // 回転途中だったら抜ける
-    if (state == states::STATE_TURN) return;
 
-    target_dir += 3.14 / 2;
-    if (target_dir > 3.14) {
-        target_dir = -3.14 / 2;
-    }
-    vel.angular = 1.0;
-    state = states::STATE_TURN;
 }
 
 void ROBO::stop() {

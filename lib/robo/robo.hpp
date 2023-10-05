@@ -26,11 +26,9 @@ public:
     // 毎ループ呼ぶ関数
     void execute();
 
-    // コマンド入力に対応して呼ぶ
-    void go_up();
-    void go_down();
-    void go_left();
-    void go_right();
+    void set_velocity(float vx, float vy);
+    void set_vel_x(float vx);
+    void set_vel_y(float vy);
     void turn_right();
     void turn_left();
     void stop();

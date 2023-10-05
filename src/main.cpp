@@ -34,15 +34,35 @@ void loop() {
   if(udp_rx.is_updated()){
     cnt = 0;
     ConnectionData data = udp_rx.read();
-    if(data.data.up) robo.go_up();
-    if(data.data.down) robo.go_down();
-    if(data.data.left) robo.go_left();
-    if(data.data.right) robo.go_right();
-    if(data.data.l_turn) robo.turn_left();
-    if(data.data.r_turn) robo.turn_right();
+    Serial.print(data.serialize());
+    robo.set_velocity(0.0, 0.0);
+    if(data.data.up) {
+      Serial.print(" up");
+      robo.set_vel_x(1.0);
+    }
+    if(data.data.down) {
+      Serial.print(" down");
+      robo.set_vel_x(-1.0);
+      };
+    if(data.data.left) {
+      Serial.print(" left");
+      robo.set_vel_y(1.0);
+      };
+    if(data.data.right) {
+      Serial.print(" right");
+      robo.set_vel_y(-1.0);
+      };
+    if(data.data.l_turn) {
+      Serial.print(" l_turn");
+      robo.turn_left();
+      };
+    if(data.data.r_turn) {
+      Serial.print(" r_turn");
+      robo.turn_right();
+      };
   }
   else {
-    Serial.println(cnt);
+    //Serial.println(cnt);
     cnt++;
   }
   if(cnt>=1000) {
@@ -64,7 +84,28 @@ void loop() {
 
 // void loop() {
 //   ConnectionData data;
-//   data.down();
+//   static int cnt = 0;
+//   cnt++;
+//   data.reset();
+//   if(cnt < 1000){
+//     data.up();
+//     data.up();
+//   }
+//   else if(cnt < 2000){
+//     data.left();
+//     data.up();
+//   }
+//   else if(cnt < 3000){
+//     data.down();
+//     data.up();
+//   }
+//   else if(cnt < 4000){
+//     data.right();
+//     data.up();
+//   }
+//   else if(cnt < 7000){
+//     cnt = 0;
+//   }
 //   udp_tx.write(data);
 //   if(!udp_tx.get_wifi_flg()) udp_tx.init();
 //   ets_delay_us(1000);
