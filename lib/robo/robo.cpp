@@ -16,10 +16,10 @@ ROBO::ROBO() :
     * 
     *       M1
    */
-    motorLF(MOTOR2_pin, 1.0f),
+    motorLF(MOTOR4_pin, 1.0f),
     motorLB(MOTOR3_pin, 1.0f),
     motorRF(MOTOR1_pin, 1.0f),
-    motorRB(MOTOR4_pin, 1.0f),
+    motorRB(MOTOR2_pin, 1.0f),
 
     vel{0, 0, 0},
     target_dir(0),
@@ -46,26 +46,23 @@ void ROBO::init()
 
 void ROBO::execute()
 {
-    // // 回転をとめる判定のマージン
-    // constexpr float margin = 0.1;
-    // float direction = get_angle();
+    float direction = get_angle();
+    float angle_error = direction - target_dir;
+    Serial.printf("angle_error %lf\n", angle_error);
 
-    // switch (state)
-    // {
-    // case states::STATE_TURN:
-    //     // 目標角度に近づいたら回転を止める
-    //     // これで止まるのか分からん #debug
-    //     if ((vel.angular > 0 && direction > target_dir - margin) ||
-    //         (vel.angular < 0 && direction < target_dir + margin))
-    //     {
-    //         vel.angular = 0.0;
-    //         state = states::STATE_STANDBY;
-    //     }
-    //     break;
+    // 向きを一定にする
+    //vel.angular = 1.0 * angle_error;
 
-    // default:
-    //     break;
-    // }
+    // -1~1の間に抑える
+    auto clamp = [](float vel)->float {
+        if (vel > 1.0) {
+            return 1.0;
+        } else if (vel < -1.0) {
+            return -1.0; 
+        } else {
+            return vel;
+        }
+    };
 
     // モータを回す
     // こんな計算で…いいのか？ #debug
@@ -75,10 +72,10 @@ void ROBO::execute()
     Serial.print(", ");
     Serial.print(vel.angular);
     Serial.println(" ");
-    motorLF.out((vel.x - vel.y + vel.angular) / 2.0f);
-    motorRF.out((vel.x + vel.y + vel.angular) / 2.0f);
-    motorLB.out(-(vel.x + vel.y - vel.angular) / 2.0f);
-    motorRB.out((vel.x - vel.y + vel.angular) / 2.0f);
+    motorLF.out(clamp(-(vel.x - vel.y + vel.angular) / 1.0f));
+    motorRF.out(clamp((vel.x + vel.y - vel.angular) / 1.0f));
+    motorLB.out(clamp(-(vel.x + vel.y + vel.angular) / 1.0f));
+    motorRB.out(clamp(-(vel.x - vel.y - vel.angular) / 1.0f));
 }
 
 void ROBO::set_velocity(float vx, float vy) {
