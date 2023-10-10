@@ -22,7 +22,7 @@ ROBO::ROBO() :
     motorRB(MOTOR2_pin, 1.0f),
 
     vel{0, 0, 0},
-    target_dir(0),
+    target_dir(PI),
 
     state(states::STATE_STANDBY)
 {}
@@ -47,11 +47,18 @@ void ROBO::init()
 void ROBO::execute()
 {
     float direction = get_angle();
+    Serial.printf("angle%lf, ", direction);
     float angle_error = direction - target_dir;
-    Serial.printf("angle_error %lf\n", angle_error);
+
+    while(angle_error > PI) {
+        angle_error -= PI * 2;
+    }
+    while(angle_error < -PI) {
+        angle_error += PI * 2;
+    }
 
     // 向きを一定にする
-    //vel.angular = 1.0 * angle_error;
+    vel.angular = 2.0 * angle_error;
 
     // -1~1の間に抑える
     auto clamp = [](float vel)->float {
@@ -66,12 +73,14 @@ void ROBO::execute()
 
     // モータを回す
     // こんな計算で…いいのか？ #debug
+    /*
     Serial.print(vel.x);
     Serial.print(", ");
     Serial.print(vel.y);
     Serial.print(", ");
     Serial.print(vel.angular);
     Serial.println(" ");
+    */
     motorLF.out(clamp(-(vel.x - vel.y + vel.angular) / 1.0f));
     motorRF.out(clamp((vel.x + vel.y - vel.angular) / 1.0f));
     motorLB.out(clamp(-(vel.x + vel.y + vel.angular) / 1.0f));
@@ -107,5 +116,6 @@ void ROBO::stop() {
 float ROBO::get_angle() {
     // ジャイロのついてる向きが分からんので確認して #debug
     xyz_t data = gyro_sens.read_mag();
-    return std::atan2(data.y, data.x);
+    Serial.printf("x:%lf, y:%lf, z:%lf\n", data.x - 90, data.y + 40, data.z);
+    return std::atan2(data.x - 90, data.y + 40);
 }
