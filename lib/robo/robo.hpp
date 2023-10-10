@@ -48,6 +48,7 @@ public:
 private:
     velocity_t vel; // 目標速度
     float target_dir; // 目標角度
+    float angle_error; // 目標角度
 
     BMX055 gyro_sens; // ジャイロ
 

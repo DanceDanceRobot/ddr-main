@@ -18,18 +18,79 @@
 
 #include <Arduino.h>
 #include "robo.hpp"
-#include "standalone_udp_rx.hpp"
+
+
+//////////////////////////////////////////////
+//        RemoteXY include library          //
+//////////////////////////////////////////////
+
+// RemoteXY select connection mode and include library 
+#define REMOTEXY_MODE__ESP32CORE_BLE
+#include <BLEDevice.h>
+
+#include <RemoteXY.h>
+
+// RemoteXY connection settings 
+#define REMOTEXY_BLUETOOTH_NAME "RemoteXY"
+
+
+// RemoteXY configurate  
+#pragma pack(push, 1)
+uint8_t RemoteXY_CONF[] =   // 51 bytes
+  { 255,5,0,0,0,44,0,16,31,1,5,0,16,34,30,30,2,26,31,1,
+  0,7,13,12,12,2,31,76,0,1,0,44,13,12,12,2,31,82,0,1,
+  3,25,78,12,12,2,31,115,101,116,0 };
+  
+// this structure defines all the variables and events of your control interface 
+struct {
+
+    // input variables
+  int8_t joystick_1_x; // from -100 to 100  
+  int8_t joystick_1_y; // from -100 to 100  
+  uint8_t button_1; // =1 if button pressed, else =0 
+  uint8_t button_2; // =1 if button pressed, else =0 
+  uint8_t button_3; // =1 if button pressed, else =0 
+
+    // other variable
+  uint8_t connect_flag;  // =1 if wire connected, else =0 
+
+} RemoteXY;
+#pragma pack(pop)
+
+/////////////////////////////////////////////
+//           END RemoteXY include          //
+/////////////////////////////////////////////
+
+
+
+
+//#include "standalone_udp_rx.hpp"
 
 ROBO robo;
-StdAlnUdpRx udp_rx;
+//StdAlnUdpRx udp_rx;
 
 void setup() {
-  udp_rx.init();
+  RemoteXY_Init (); 
+  
+  //udp_rx.init();
   robo.init();
 }
 
 void loop() {
+  RemoteXY_Handler ();
+
+  robo.set_vel_x(RemoteXY.joystick_1_y / 100);
+  robo.set_vel_y(RemoteXY.joystick_1_x / -100);
+  if (RemoteXY.button_1 == 1) {
+    robo.turn_left();
+  }
+  if (RemoteXY.button_2 == 1) {
+    robo.turn_right();
+  }
+
+
   static int cnt = 0;
+  /*
   udp_rx.update();
   if(udp_rx.is_updated()){
     cnt = 0;
@@ -68,6 +129,7 @@ void loop() {
   if(cnt>=1000) {
     robo.stop(); 
   }
+  */
   robo.execute();
   ets_delay_us(1000);
 }
