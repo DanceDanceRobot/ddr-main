@@ -48,7 +48,7 @@ void ROBO::init()
 void ROBO::execute()
 {
     float direction = get_angle();
-    Serial.printf("angle%lf, ", direction);
+    //Serial.printf("angle%lf, ", direction);
     angle_error = direction - target_dir;
 
     while(angle_error > PI) {
@@ -119,6 +119,6 @@ void ROBO::stop() {
 float ROBO::get_angle() {
     // ジャイロのついてる向きが分からんので確認して #debug
     xyz_t data = gyro_sens.read_mag();
-    Serial.printf("x:%lf, y:%lf, z:%lf\n", data.x - 65, data.y + 10, data.z);
+    //Serial.printf("x:%lf, y:%lf, z:%lf\n", data.x - 65, data.y + 10, data.z);
     return std::atan2(data.x - 65, data.y + 10);
 }

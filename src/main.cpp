@@ -19,6 +19,7 @@
 #include <Arduino.h>
 #include "robo.hpp"
 
+/*
 
 //////////////////////////////////////////////
 //        RemoteXY include library          //
@@ -61,36 +62,36 @@ struct {
 //           END RemoteXY include          //
 /////////////////////////////////////////////
 
+*/
 
 
-
-//#include "standalone_udp_rx.hpp"
+#include "standalone_udp_rx.hpp"
 
 ROBO robo;
-//StdAlnUdpRx udp_rx;
+StdAlnUdpRx udp_rx;
 
 void setup() {
-  RemoteXY_Init (); 
+  //RemoteXY_Init (); 
   
-  //udp_rx.init();
+  udp_rx.init();
   robo.init();
 }
 
 void loop() {
-  RemoteXY_Handler ();
+  //RemoteXY_Handler ();
 
-  robo.set_vel_x(RemoteXY.joystick_1_y / 100);
-  robo.set_vel_y(RemoteXY.joystick_1_x / -100);
-  if (RemoteXY.button_1 == 1) {
-    robo.turn_left();
-  }
-  if (RemoteXY.button_2 == 1) {
-    robo.turn_right();
-  }
+  // robo.set_vel_x(RemoteXY.joystick_1_y / 100);
+  // robo.set_vel_y(RemoteXY.joystick_1_x / -100);
+  // if (RemoteXY.button_1 == 1) {
+  //   robo.turn_left();
+  // }
+  // if (RemoteXY.button_2 == 1) {
+  //   robo.turn_right();
+  // }
 
 
   static int cnt = 0;
-  /*
+
   udp_rx.update();
   if(udp_rx.is_updated()){
     cnt = 0;
@@ -129,7 +130,6 @@ void loop() {
   if(cnt>=1000) {
     robo.stop(); 
   }
-  */
   robo.execute();
   ets_delay_us(1000);
 }
