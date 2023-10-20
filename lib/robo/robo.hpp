@@ -49,8 +49,11 @@ private:
     velocity_t vel; // 目標速度
     float target_dir; // 目標角度
     float angle_error; // 目標角度
+    float angle_offset;
 
     BMX055 gyro_sens; // ジャイロ
+    float gyro_x_offset;
+    float gyro_y_offset;
 
     // ドライバ
     DRIVER md1;
@@ -66,5 +69,7 @@ private:
 
     // 状態
     ROBO::states state;
+
+    void vel_to_motor();
 
 };

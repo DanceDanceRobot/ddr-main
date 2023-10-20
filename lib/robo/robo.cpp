@@ -24,6 +24,9 @@ ROBO::ROBO() :
     vel{0, 0, 0},
     target_dir(PI),
     angle_error(0),
+    gyro_x_offset(0),
+    gyro_y_offset(0),
+    angle_offset(0),
 
     state(states::STATE_STANDBY)
 {}
@@ -43,12 +46,39 @@ void ROBO::init()
     motorLB.init();
     motorRF.init();
     motorRB.init();
+
+    // 地磁気のオフセット、角度の初期値を設定
+    xyz_t first_data = gyro_sens.read_mag();
+    // 回転することで中心値を確認
+    vel.angular = 1;
+    vel_to_motor();
+    float x_max = -10000;
+    float x_min = 10000;
+    float y_max = -10000;
+    float y_min = 10000;
+    for (int i = 0; i < 1000; i++) {
+        xyz_t data = gyro_sens.read_mag();
+        if (data.x > x_max) {
+            x_max = data.x;
+        } else if (data.x < x_min) {
+            x_min = data.x;
+        }
+        if (data.y > y_max) {
+            y_max = data.y;
+        } else if (data.y < y_min) {
+            y_min = data.y;
+        }
+        ets_delay_us(1000);
+    }
+    gyro_x_offset = -1 * (x_min + x_max) / 2;
+    gyro_y_offset = -1 * (y_min + y_max) / 2; 
+    target_dir = std::atan2(first_data.x + gyro_x_offset, first_data.y + gyro_y_offset);
 }
 
 void ROBO::execute()
 {
     float direction = get_angle();
-    //Serial.printf("angle%lf, ", direction);
+    Serial.printf("angle%lf, ", direction);
     angle_error = direction - target_dir;
 
     while(angle_error > PI) {
@@ -59,33 +89,9 @@ void ROBO::execute()
     }
 
     // 向きを一定にする
-    vel.angular = 2.0 * angle_error;
+    vel.angular = 2.0 * angle_error; 
 
-    // -1~1の間に抑える
-    auto clamp = [](float vel)->float {
-        if (vel > 1.0) {
-            return 1.0;
-        } else if (vel < -1.0) {
-            return -1.0; 
-        } else {
-            return vel;
-        }
-    };
-
-    // モータを回す
-    // こんな計算で…いいのか？ #debug
-    /*
-    Serial.print(vel.x);
-    Serial.print(", ");
-    Serial.print(vel.y);
-    Serial.print(", ");
-    Serial.print(vel.angular);
-    Serial.println(" ");
-    */
-    motorLF.out(clamp(-(vel.x - vel.y + vel.angular) / 1.0f));
-    motorRF.out(clamp((vel.x + vel.y - vel.angular) / 1.0f));
-    motorLB.out(clamp(-(vel.x + vel.y + vel.angular) / 1.0f));
-    motorRB.out(clamp(-(vel.x - vel.y - vel.angular) / 1.0f));
+    vel_to_motor();
 }
 
 void ROBO::set_velocity(float vx, float vy) {
@@ -119,6 +125,24 @@ void ROBO::stop() {
 float ROBO::get_angle() {
     // ジャイロのついてる向きが分からんので確認して #debug
     xyz_t data = gyro_sens.read_mag();
-    //Serial.printf("x:%lf, y:%lf, z:%lf\n", data.x - 65, data.y + 10, data.z);
-    return std::atan2(data.x - 65, data.y + 10);
+    Serial.printf("x:%lf, y:%lf, z:%lf\n", data.x, data.y, data.z);
+    return std::atan2(data.x + gyro_x_offset, data.y + gyro_y_offset);
+}
+
+void ROBO::vel_to_motor() {
+    // -1~1の間に抑える
+    auto clamp = [](float vel)->float {
+        if (vel > 1.0) {
+            return 1.0;
+        } else if (vel < -1.0) {
+            return -1.0; 
+        } else {
+            return vel;
+        }
+    };
+    
+    motorLF.out(clamp(-(vel.x - vel.y + vel.angular) / 1.0f));
+    motorRF.out(clamp((vel.x + vel.y - vel.angular) / 1.0f));
+    motorLB.out(clamp(-(vel.x + vel.y + vel.angular) / 1.0f));
+    motorRB.out(clamp(-(vel.x - vel.y - vel.angular) / 1.0f));
 }
