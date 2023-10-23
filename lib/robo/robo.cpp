@@ -22,11 +22,12 @@ ROBO::ROBO() :
     motorRB(MOTOR2_pin, 1.0f),
 
     vel{0, 0, 0},
-    target_dir(PI),
+    target_dir(0),
     angle_error(0),
     gyro_x_offset(0),
     gyro_y_offset(0),
     angle_offset(0),
+    direction(0),
 
     state(states::STATE_STANDBY)
 {}
@@ -72,12 +73,12 @@ void ROBO::init()
     }
     gyro_x_offset = -1 * (x_min + x_max) / 2;
     gyro_y_offset = -1 * (y_min + y_max) / 2; 
-    target_dir = std::atan2(first_data.x + gyro_x_offset, first_data.y + gyro_y_offset);
+    angle_offset = std::atan2(first_data.x + gyro_x_offset, first_data.y + gyro_y_offset);
 }
 
 void ROBO::execute()
 {
-    float direction = get_angle();
+    direction = get_angle();
     Serial.printf("angle%lf, ", direction);
     angle_error = direction - target_dir;
 
@@ -89,7 +90,7 @@ void ROBO::execute()
     }
 
     // 向きを一定にする
-    vel.angular = 2.0 * angle_error; 
+     vel.angular = 2.0 * angle_error; 
 
     vel_to_motor();
 }
@@ -126,10 +127,14 @@ float ROBO::get_angle() {
     // ジャイロのついてる向きが分からんので確認して #debug
     xyz_t data = gyro_sens.read_mag();
     Serial.printf("x:%lf, y:%lf, z:%lf\n", data.x, data.y, data.z);
-    return std::atan2(data.x + gyro_x_offset, data.y + gyro_y_offset);
+    return std::atan2(data.x + gyro_x_offset, data.y + gyro_y_offset) - angle_offset;
 }
 
 void ROBO::vel_to_motor() {
+    // XYベクトルを回転
+    float x = std::cos(-direction) * vel.x - std::sin(-direction) * vel.y;
+    float y = std::sin(-direction) * vel.x + std::cos(-direction) * vel.y;
+
     // -1~1の間に抑える
     auto clamp = [](float vel)->float {
         if (vel > 1.0) {
@@ -141,8 +146,8 @@ void ROBO::vel_to_motor() {
         }
     };
     
-    motorLF.out(clamp(-(vel.x - vel.y + vel.angular) / 1.0f));
-    motorRF.out(clamp((vel.x + vel.y - vel.angular) / 1.0f));
-    motorLB.out(clamp(-(vel.x + vel.y + vel.angular) / 1.0f));
-    motorRB.out(clamp(-(vel.x - vel.y - vel.angular) / 1.0f));
+    motorLF.out(clamp(-(x - y + vel.angular) / 1.0f));
+    motorRF.out(clamp((x + y - vel.angular) / 1.0f));
+    motorLB.out(clamp(-(x + y + vel.angular) / 1.0f));
+    motorRB.out(clamp(-(x - y - vel.angular) / 1.0f));
 }

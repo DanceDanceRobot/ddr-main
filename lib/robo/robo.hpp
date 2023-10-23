@@ -67,6 +67,8 @@ private:
     MOTOR motorRF;
     MOTOR motorRB;
 
+    float direction;
+
     // 状態
     ROBO::states state;
 
