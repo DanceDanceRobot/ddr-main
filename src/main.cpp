@@ -19,6 +19,11 @@
 #include <Arduino.h>
 #include "robo.hpp"
 
+#include <FastLED.h>
+ 
+#define numberOfLEDs 6
+#define controlPin 23
+ 
 /*
 
 //////////////////////////////////////////////
@@ -70,10 +75,28 @@ struct {
 ROBO robo;
 StdAlnUdpRx udp_rx;
 
+CRGB leds[numberOfLEDs];
+
 void setup() {
   //RemoteXY_Init (); 
   
   udp_rx.init();
+
+  FastLED.addLeds<WS2812B, controlPin, GRB>(leds, numberOfLEDs);
+  for (int thisLED = 0; thisLED < numberOfLEDs; thisLED++) {
+    if (thisLED <= 1 || 4 <= thisLED) {
+      leds[thisLED].r = 200;
+      leds[thisLED].g = 200;
+      leds[thisLED].b = 0;
+    } else {
+      leds[thisLED].r = 255;
+      leds[thisLED].g = 0;
+      leds[thisLED].b = 0;
+    }
+    
+    FastLED.show();
+  }
+
   robo.init();
 }
 
