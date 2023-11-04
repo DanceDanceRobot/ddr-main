@@ -134,9 +134,12 @@ float ROBO::get_angle() {
 
 void ROBO::vel_to_motor() {
     // XYベクトルを回転
-    float x = std::cos(-direction) * vel.x - std::sin(-direction) * vel.y;
-    float y = std::sin(-direction) * vel.x + std::cos(-direction) * vel.y;
+    // float x = std::cos(-direction) * vel.x - std::sin(-direction) * vel.y;
+    // float y = std::sin(-direction) * vel.x + std::cos(-direction) * vel.y;
 
+    float x = vel.x;
+    float y = vel.y;
+    
     // -1~1の間に抑える
     auto clamp = [](float vel)->float {
         if (vel > 1.0) {
