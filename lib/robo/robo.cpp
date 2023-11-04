@@ -110,12 +110,14 @@ void ROBO::set_vel_y(float vy) {
 
 void ROBO::turn_right() {
     if (std::abs(angle_error) > 0.1) return;
-   target_dir -= PI / 2; 
+   //target_dir -= PI / 2; 
+   target_dir -= PI/6;
 }
 
 void ROBO::turn_left() {
     if (std::abs(angle_error) > 0.1) return;
-   target_dir += PI / 2; 
+   //target_dir += PI / 2; 
+   target_dir += PI/6;
 }
 
 void ROBO::stop() {
@@ -146,16 +148,16 @@ void ROBO::vel_to_motor() {
         }
     };
     // with black wheel
-    /*
+    
     motorLF.out(clamp(-(x - y + vel.angular) / 1.0f));
     motorRF.out(clamp((x + y - vel.angular) / 1.0f));
     motorLB.out(clamp(-(x + y + vel.angular) / 1.0f));
     motorRB.out(clamp(-(x - y - vel.angular) / 1.0f));   
-    */
+    
 
     // with white wheel
-    motorLF.out(clamp(-(x - y + vel.angular) / 1.0f));
-    motorRF.out(clamp(-(x + y - vel.angular) / 1.0f));
-    motorLB.out(clamp((x + y + vel.angular) / 1.0f));
-    motorRB.out(clamp((x - y - vel.angular) / 1.0f));
+    // motorLF.out(clamp(-(x - y + vel.angular) / 1.0f));
+    // motorRF.out(clamp(-(x + y - vel.angular) / 1.0f));
+    // motorLB.out(clamp((x + y + vel.angular) / 1.0f));
+    // motorRB.out(clamp((x - y - vel.angular) / 1.0f));
 }
