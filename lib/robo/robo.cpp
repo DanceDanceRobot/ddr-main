@@ -148,16 +148,15 @@ void ROBO::vel_to_motor() {
         }
     };
     // with black wheel
-    
-    motorLF.out(clamp(-(x - y + vel.angular) / 1.0f));
-    motorRF.out(clamp((x + y - vel.angular) / 1.0f));
-    motorLB.out(clamp(-(x + y + vel.angular) / 1.0f));
-    motorRB.out(clamp(-(x - y - vel.angular) / 1.0f));   
+    // motorLF.out(clamp(-(x - y + vel.angular) / 1.0f));
+    // motorRF.out(clamp((x + y - vel.angular) / 1.0f));
+    // motorLB.out(clamp(-(x + y + vel.angular) / 1.0f));
+    // motorRB.out(clamp(-(x - y - vel.angular) / 1.0f));   
     
 
     // with white wheel
-    // motorLF.out(clamp(-(x - y + vel.angular) / 1.0f));
-    // motorRF.out(clamp(-(x + y - vel.angular) / 1.0f));
-    // motorLB.out(clamp((x + y + vel.angular) / 1.0f));
-    // motorRB.out(clamp((x - y - vel.angular) / 1.0f));
+    motorLF.out(clamp(-(x - y + vel.angular) / 1.0f));
+    motorRF.out(clamp(-(x + y - vel.angular) / 1.0f));
+    motorLB.out(clamp((x + y + vel.angular) / 1.0f));
+    motorRB.out(clamp((x - y - vel.angular) / 1.0f));
 }
